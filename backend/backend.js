@@ -43,9 +43,9 @@ app.get("/:hash",async (req,res) => {
   const originalUrl = original.originalUrl;
 
   if(originalUrl) {
-    res.redirect('http://'+originalUrl);
+    res.redirect(originalUrl);
   } else {
-    res.status(500);
+    res.status(500).send("Invalid URL");
   }
 })
 
