@@ -62,7 +62,7 @@ app.post("/shorten/:url",isValidUrl ,async (req,res) => {
   console.log(isExist);
 
   if(isExist) {
-    res.send({shortUrl: `http://localhost:3000/${isExist.shortUrl}`})
+    res.send({shortUrl: `https://shorturl-7tor.onrender.com/${isExist.shortUrl}`})
     return;
   }
   
@@ -70,7 +70,7 @@ app.post("/shorten/:url",isValidUrl ,async (req,res) => {
   await urltemp.save()
     .then(() => console.log('updated db'))
     .catch(() => console.log('db not updated'))
-  const shortUrl = `http://localhost:3000/${result}`;
+  const shortUrl = `http://locahttps://shorturl-7tor.onrender.comlhost:3000/${result}`;
   res.send({shortUrl});
 })
 

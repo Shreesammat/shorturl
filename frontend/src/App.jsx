@@ -15,7 +15,7 @@ function App() {
   const handleSubmit = async () => {
     try {
       // Send a POST request to your backend with the URL
-      const response = await axios.post(`http://localhost:3000/shorten/${inputUrl}`);
+      const response = await axios.post(`https://shorturl-7tor.onrender.com/shorten/${inputUrl}`);
       setShortenedUrl(response.data.shortUrl);
     } catch (error) {
       console.error('Error:', error);
