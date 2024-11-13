@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/backend.js",
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["db/connectdb.js"] }
+    },
+    {
+      "src": "frontend/dist/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/shorten/(.*)", "dest": "backend/backend.js" },
+    { "src": "/(.*)", "dest": "backend/backend.js" },
+    { "src": "/static/(.*)", "dest": "frontend/dist/$1" }
+  ],
+  "buildCommand": "npm run build && cd ../frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist"
+}
