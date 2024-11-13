@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import axios from 'axios';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputUrl, setInputUrl] = useState('');
+  const [shortenedUrl, setShortenedUrl] = useState('');
+
+  // Handle input change
+  const handleChange = (e) => {
+    setInputUrl(e.target.value);
+  };
+
+  // Handle the send button click
+  const handleSubmit = async () => {
+    try {
+      // Send a POST request to your backend with the URL
+      const response = await axios.post(`http://localhost:3000/shorten/${inputUrl}`);
+      setShortenedUrl(response.data.shortUrl);
+    } catch (error) {
+      console.error('Error:', error);
+      setShortenedUrl('Error creating shortened URL');
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      <h1>URL Shortener</h1>
+      <input
+        type="text"
+        value={inputUrl}
+        onChange={handleChange}
+        placeholder="Enter a URL"
+      />
+      <button onClick={handleSubmit}>Send</button>
+
+      {shortenedUrl && (
+        <div className="result">
+          <h2>Shortened URL:</h2>
+          <a href={shortenedUrl} target="_blank" rel="noopener noreferrer">
+            {shortenedUrl}
+          </a>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
