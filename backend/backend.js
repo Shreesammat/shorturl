@@ -70,7 +70,7 @@ app.post("/shorten/:url",isValidUrl ,async (req,res) => {
   await urltemp.save()
     .then(() => console.log('updated db'))
     .catch(() => console.log('db not updated'))
-  const shortUrl = `http://locahttps://shorturl-7tor.onrender.comlhost:3000/${result}`;
+  const shortUrl = `https://shorturl-7tor.onrender.com/${result}`;
   res.send({shortUrl});
 })
 
