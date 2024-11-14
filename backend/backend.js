@@ -14,7 +14,8 @@ function isValidUrl(req, res, next) {
   let inputUrl = req.params.url;
 
   try {
-    const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
+    const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/;
+
 
     // Prepend 'http://' if the URL lacks a protocol
     if (!/^https?:\/\//i.test(inputUrl)) {
@@ -61,7 +62,8 @@ app.post("/shorten/:url", isValidUrl, async (req, res) => {
     return;
   }
 
-  const shortUrl = hasher(url);
+  const encodedUrl = encodeURIComponent(url);
+  const shortUrl = hasher(encodedUrl);
   const newEntry = new Url({ originalUrl: url, shortUrl });
   
   try {
