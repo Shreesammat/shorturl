@@ -1,5 +1,6 @@
 const express = require('express');
 const { Url } = require('./db/connectdb');
+const crypto = require('crypto');
 
 const app = express();
 const port = 3000;
@@ -11,12 +12,17 @@ app.use(express.static('../frontend/dist'));
 function isValidUrl(req,res,next) {
   let inputUrl = req.params.url;
 
-  if(!/^https?:\/\//i.test(inputUrl)) {
-    console.log('Adding protocol to input')
-    inputUrl = 'http://' + inputUrl;
-  }
   try {
-    new URL(inputUrl);
+    const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
+  
+    // Prepend 'http://' if the URL lacks a protocol
+    if (!/^https?:\/\//i.test(inputUrl)) {
+      url = 'http://' + inputUrl;
+    }
+
+    if(!urlPattern.test(inputUrl)) {
+      throw new Error("Invalid URL format")
+    }
 
     console.log(inputUrl, ' isvalidurl try block');
     req.validateUrl = inputUrl;
@@ -75,18 +81,29 @@ app.post("/shorten/:url",isValidUrl ,async (req,res) => {
 })
 
 //hashing
-function hasher(str) {
-  let hashValue = 0;
-    const prime = 31;  // A small prime number as base
-    const mod = 1000000007;  // A large prime modulus to keep the hash value manageable
+const base62chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    for (let i = 0; i < str.length; i++) {
-      hashValue = (hashValue * prime + str.charCodeAt(i)) % mod;
-    }
-    
-    return hashValue.toString();
+// Function to convert a number to Base62
+function toBase62(num) {
+  let base62 = '';
+  while (num > 0) {
+    base62 = base62chars[num % 62] + base62;
+    num = Math.floor(num / 62);
+  }
+  return base62;
 }
 
+function hasher(url) {
+  // Create an MD5 hash of the URL
+  const hash = crypto.createHash('md5').update(url).digest('hex');
+
+  // Convert a portion of the hash to a number and then to Base62
+  const hashInt = parseInt(hash.slice(0, 8), 16); // Take the first 8 characters of the hash
+  const base62String = toBase62(hashInt);
+
+  // Return the first 7 characters of the Base62 string
+  return base62String.slice(0, 7);
+}
 
 app.listen(port, () => {
   console.log(`server running completely fine on ${port}`)
