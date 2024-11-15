@@ -2,6 +2,8 @@ const express = require('express');
 const { Url } = require('./db/connectdb');
 const crypto = require('crypto');
 const path = require('path');
+const env = require('dotenv');
+env.config();
 
 const app = express();
 const port = 3000;
@@ -11,8 +13,8 @@ app.use(express.static(path.join(__dirname, '../frontend/dist'))); // Serve Reac
 
 // URL validation middleware
 function isValidUrl(req, res, next) {
-  let inputUrl = req.params.url;
-
+  let inputUrl = req.body.inputUrl;
+  console.log('middle inputUrl is', inputUrl)
   try {
     const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/;
 
@@ -53,20 +55,26 @@ app.get("/:hash", async (req, res) => {
 });
 
 // URL shortening endpoint
-app.post("/shorten/:url", isValidUrl, async (req, res) => {
+app.post("/shorten", isValidUrl, async (req, res) => {
   const url = req.validateUrl;
+  console.log("url is ",url)
+  // req.body = {inputUrl: inputUrl}
   const existingEntry = await Url.findOne({ originalUrl: url });
-
+  console.log("existing enty  is ",existingEntry)
+  console.log("here")
   if (existingEntry) {
-    res.send({ shortUrl: `https://shorturl-7tor.onrender.com/${existingEntry.shortUrl}` });
+    res.send({ shortUrl: `${process.env.HOST}/${existingEntry.shortUrl}` });
     return;
   }
 
   const encodedUrl = encodeURIComponent(url);
   const shortUrl = hasher(encodedUrl);
+  console.log("shortUrl is : ", shortUrl)
   const newEntry = new Url({ originalUrl: url, shortUrl });
+  console.log("made new entry")
   
   try {
+    console.log('newEntry block')
     await newEntry.save();
     console.log('DB updated with new entry');
     res.send({ shortUrl: `https://shorturl-7tor.onrender.com/${shortUrl}` });
