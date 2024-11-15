@@ -15,7 +15,7 @@ function App() {
   const handleSubmit = async () => {
     try {
       // Send a POST request to your backend with the URL
-      const response = await fetch(`${import.meta.env.VITE_HOST}/shorten`, {
+      const response = await fetch(`${"https://shorturl-7tor.onrender.com"}/shorten`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
