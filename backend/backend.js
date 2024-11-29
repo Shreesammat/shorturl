@@ -4,10 +4,18 @@ const crypto = require('crypto');
 const path = require('path');
 const env = require('dotenv');
 env.config();
+const cors = require("cors")
 
 const app = express();
 const port = 3000;
+const corsOptions = {
+  origin: "*", // Allow only this origin
+  methods: ["GET", "POST"], // Allow only specific HTTP methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers
+  credentials: true, // Allow cookies to be sent
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend/dist'))); // Serve React build files
 
