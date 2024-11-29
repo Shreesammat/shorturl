@@ -5,17 +5,11 @@
       "src": "backend/backend.js",
       "use": "@vercel/node",
       "config": { "includeFiles": ["db/connectdb.js"] }
-    },
-    {
-      "src": "frontend/dist/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     { "src": "/shorten/(.*)", "dest": "backend/backend.js" },
-    { "src": "/(.*)", "dest": "backend/backend.js" },
-    { "src": "/static/(.*)", "dest": "frontend/dist/$1" }
+    { "src": "/(.*)", "dest": "backend/backend.js" }
   ],
-  "buildCommand": "",
-  "outputDirectory": "frontend/dist"
+  "buildCommand": ""
 }
