@@ -16,6 +16,6 @@
     { "src": "/(.*)", "dest": "backend/backend.js" },
     { "src": "/static/(.*)", "dest": "frontend/dist/$1" }
   ],
-  "buildCommand": "npm run build && cd ../frontend && npm install && npm run build",
+  "buildCommand": "",
   "outputDirectory": "frontend/dist"
 }

@@ -9,7 +9,6 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend/dist'))); // Serve React build files
 
 // URL validation middleware
 function isValidUrl(req, res, next) {
@@ -36,11 +35,6 @@ function isValidUrl(req, res, next) {
     res.status(400).send("Invalid URL format");
   }
 }
-
-// Serve React app for root route
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-});
 
 // Redirect endpoint
 app.get("/:hash", async (req, res) => {

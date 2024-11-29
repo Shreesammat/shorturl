@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
+const host = "https://shorturl-7tor.onrender.com"
+
 function App() {
   const [inputUrl, setInputUrl] = useState('');
   const [shortenedUrl, setShortenedUrl] = useState('');
@@ -15,7 +17,7 @@ function App() {
   const handleSubmit = async () => {
     try {
       // Send a POST request to your backend with the URL
-      const response = await fetch(`${import.meta.env.VITE_HOST}/shorten`, {
+      const response = await fetch(`${host}/shorten`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
