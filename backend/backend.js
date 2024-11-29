@@ -9,7 +9,7 @@ const cors = require("cors")
 const app = express();
 const port = 3000;
 const corsOptions = {
-  origin: "*", // Allow only this origin
+  origin: "https://shorturl-ao28.vercel.app", // Allow only this origin
   methods: ["GET", "POST"], // Allow only specific HTTP methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers
   credentials: true, // Allow cookies to be sent
