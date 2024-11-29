@@ -4,12 +4,13 @@
     {
       "src": "backend/backend.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["db/connectdb.js"] }
+      "config": {
+        "includeFiles": ["backend/db/connectdb.js"]
+      }
     }
   ],
   "routes": [
     { "src": "/shorten/(.*)", "dest": "backend/backend.js" },
     { "src": "/(.*)", "dest": "backend/backend.js" }
-  ],
-  "buildCommand": ""
+  ]
 }
