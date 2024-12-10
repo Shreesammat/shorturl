@@ -5,6 +5,9 @@ const path = require('path');
 const env = require('dotenv');
 env.config();
 const cors = require("cors")
+app.use(cors(corsOptions));
+app.use(express.json());
+import { z } from "zod";
 
 const app = express();
 const port = 3000;
@@ -15,31 +18,31 @@ const corsOptions = {
   credentials: true, // Allow cookies to be sent
 };
 
-app.use(cors(corsOptions));
-app.use(express.json());
+
 
 // URL validation middleware
 function isValidUrl(req, res, next) {
   let inputUrl = req.body.inputUrl;
-  console.log('middle inputUrl is', inputUrl)
+  if(!inputUrl) {
+    return res.status(400).send("URL is required(1)");
+  }
+
+  // Prepend 'http://' if the URL lacks a protocol
+  if (!/^https?:\/\//i.test(inputUrl)) {
+    inputUrl = 'http://' + inputUrl;
+  }
+
   try {
-    const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/;
+    //const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?(\?[^\s]*)?(#[^\s]*)?$/;
+    const schema = z.string().url();
+    const validateUrl = schema.parse(inputUrl);
 
-
-    // Prepend 'http://' if the URL lacks a protocol
-    if (!/^https?:\/\//i.test(inputUrl)) {
-      inputUrl = 'http://' + inputUrl;
-    }
-
-    if (!urlPattern.test(inputUrl)) {
-      throw new Error("Invalid URL format");
-    }
-
-    console.log(inputUrl, 'is valid in try block');
-    req.validateUrl = inputUrl;
+    console.log(validateUrl, 'is valid (2)');
+    req.validateUrl = validateUrl;
     next();
+
   } catch (error) {
-    console.log(inputUrl, 'is invalid in catch block');
+    console.error(error.message || inputUrl, 'is invalid (2)');
     res.status(400).send("Invalid URL format");
   }
 }
@@ -60,7 +63,6 @@ app.get("/:hash", async (req, res) => {
 app.post("/shorten", isValidUrl, async (req, res) => {
   const url = req.validateUrl;
   console.log("url is ",url)
-  // req.body = {inputUrl: inputUrl}
   const existingEntry = await Url.findOne({ originalUrl: url });
   console.log("existing enty  is ",existingEntry)
   console.log("here")
