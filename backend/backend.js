@@ -4,21 +4,21 @@ const crypto = require('crypto');
 const path = require('path');
 const env = require('dotenv');
 env.config();
-const cors = require("cors")
-app.use(cors(corsOptions));
-app.use(express.json());
-import { z } from "zod";
+const cors = require("cors");
+const { z } = require("zod");
 
 const app = express();
 const port = 3000;
+
 const corsOptions = {
   origin: "*", 
-  methods: ["GET", "POST"], // Allow only specific HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers
-  credentials: true, // Allow cookies to be sent
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, 
 };
 
-
+app.use(cors(corsOptions));
+app.use(express.json());
 
 // URL validation middleware
 function isValidUrl(req, res, next) {
@@ -53,9 +53,10 @@ app.get("/:hash", async (req, res) => {
   const original = await Url.findOne({ shortUrl: hash });
   
   if (original && original.originalUrl) {
+    console.log("URL FOUND, redirecting ->")
     res.redirect(original.originalUrl);
   } else {
-    res.status(404).send("URL not found");
+    res.status(404).send("URL not found,try again :(");
   }
 });
 
@@ -67,7 +68,7 @@ app.post("/shorten", isValidUrl, async (req, res) => {
   console.log("existing enty  is ",existingEntry)
   console.log("here")
   if (existingEntry) {
-    res.send({ shortUrl: `${process.env.HOST}/${existingEntry.shortUrl}` });
+    res.send({ shortUrl: `https://shortesturl.vercel.app/${existingEntry.shortUrl}` });
     return;
   }
 
@@ -81,7 +82,7 @@ app.post("/shorten", isValidUrl, async (req, res) => {
     console.log('newEntry block')
     await newEntry.save();
     console.log('DB updated with new entry');
-    res.send({ shortUrl: `https://shorturl-7tor.onrender.com/${shortUrl}` });
+    res.send({ shortUrl: `https:shortesturl.vercel.app/${shortUrl}` });
   } catch (error) {
     console.error('DB not updated', error);
     res.status(500).send("Internal Server Error");
